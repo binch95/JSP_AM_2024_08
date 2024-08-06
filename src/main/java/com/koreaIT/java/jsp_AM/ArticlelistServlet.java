@@ -14,21 +14,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 
-@WebServlet("/Article/list")
+@WebServlet("/article/list")
 public class ArticlelistServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html;charest=UTF-8");
 		
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 		
 		response.getWriter().append("123");
 		
-		String url = "jdbc:mysql://127.0.0.1:3306/AM_JDBC_2024_07?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul";
+		String url = "jdbc:mysql://localhost:3306/Article";
 		String user = "root";
 		String password = "";
 		
@@ -39,10 +39,15 @@ public class ArticlelistServlet extends HttpServlet {
           
           DBUtil dbUtil = new DBUtil(request, response); 
           
-          String sql = "SELECT * FROM article";
+          String sql = "SELECT * FROM article ORDER BY id DESC";
           
           List<Map<String, Object>> articleRows = dbUtil.selectRows(conn, sql);
-          response.getWriter().append(articleRows.toString());
+          
+//          response.getWriter().append(articleRows.toString());
+                  
+          request.setAttribute("articleRows", articleRows);
+          request.getRequestDispatcher("/jsp/article/list.jsp").forward(request, response);
+
 
         } catch (SQLException e) {
             System.out.println("에러 1 : " + e);
